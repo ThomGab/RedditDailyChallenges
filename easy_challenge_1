@@ -1,37 +1,12 @@
-#define _CRT_SECURE_NO_WARNINGS
-#define MAX 10
+#include <stdio.h>
 #include <stdio.h>
 #include <string.h>
 
+#ifdef _MSC_VER
+	#define _CRT_SECURE_NO_WARNINGS
+#endif
 
-void Write_Input(char* Buffer_ptr,unsigned int maximum, FILE * Database_ptr, int last_element) {
-
-	fgets(Buffer_ptr, 10, stdin);
-	*(Buffer_ptr + strlen(Buffer_ptr) -1) = '\0';
-
-	if (Buffer_ptr != NULL) {
-
-		while (Buffer_ptr == NULL || (Validate_Input(Buffer_ptr, maximum) == 0)) {
-			printf("Please Enter a valid input.\n");
-			*Buffer_ptr = '\0';
-			fgets(Buffer_ptr, 10, stdin);
-		};
-
-		fwrite(Buffer_ptr, sizeof(Buffer_ptr), 1, Database_ptr);
-
-		if (last_element == 1) {
-			fwrite("\n",strlen("\n") + 1, 1, Database_ptr);
-		}
-		else {
-			fwrite("\t", strlen("\n") + 1, 1, Database_ptr);
-		}
-	}
-
-	else {
-		printf("Failed to alloc memory...\n");
-	}
-
-}
+#define MAX 10
 
 int Validate_Input(char* Buffer_ptr, unsigned int maximum) {
 	if ((strlen(Buffer_ptr) + 2) > maximum) {
@@ -43,25 +18,63 @@ int Validate_Input(char* Buffer_ptr, unsigned int maximum) {
 	}
 }
 
-int main() {
+void Write_Input(char* Buffer_ptr, unsigned int maximum, FILE * Database_ptr, int last_element){
 
-	FILE* Database = fopen("\\Users\\Tom Gabriel\\source\\repos\\Easy_Challenges\\Easy_Challenges\\Database.txt", "r+");
-	unsigned int max_input = MAX;
-	unsigned int last_element = 0;
-	char Name[MAX];
-	char Age[MAX];
-	char Username[MAX];
+		fgets(Buffer_ptr, 10, stdin);
+		*(Buffer_ptr + strlen(Buffer_ptr) - 1) = '\0';
 
-	printf("Please Enter Name:\n");
-	Write_Input(Name, max_input, Database, last_element);
+		if (Buffer_ptr != NULL) {
 
-	printf("Please Enter Age:\n");
-	Write_Input(Age, max_input, Database, last_element);
+			while (Buffer_ptr == NULL || (Validate_Input(Buffer_ptr, maximum) == 0)) {
+				printf("Please Enter a valid input.\n");
+				*Buffer_ptr = '\0';
+				fgets(Buffer_ptr, 10, stdin);
+			};
 
-	last_element = 1;
-	printf("Please Enter Username:\n");
-	Write_Input(Username, max_input, Database, last_element);
+			fwrite(Buffer_ptr, sizeof(Buffer_ptr), 1, Database_ptr);
 
-	printf("Your Name is %s, you are %s years old and your username is %s\n", Name, Age, Username);
-	
-	return 0;
+			if (last_element == 1) {
+				fwrite("\n", strlen("\n") + 1, 1, Database_ptr);
+			}
+			else {
+				fwrite("\t", strlen("\n") + 1, 1, Database_ptr);
+			}
+		}
+
+		else {
+			printf("Failed to alloc memory...\n");
+		}
+
+		return;
+}
+
+	int main() {
+
+		FILE * Database = NULL;
+		unsigned int max_input = MAX;
+		unsigned int last_element = 0;
+		char Name[MAX];
+		char Age[MAX];
+		char Username[MAX];
+
+		if ( (Database = fopen("Database.txt", "w+")) == NULL) {
+			printf("File was not opened, path invalid.\n");
+		}
+		else {
+			printf("Please Enter Name:\n");
+			Write_Input(Name, max_input, Database, last_element);
+
+			printf("Please Enter Age:\n");
+			Write_Input(Age, max_input, Database, last_element);
+
+			last_element = 1;
+			printf("Please Enter Username:\n");
+			Write_Input(Username, max_input, Database, last_element);
+
+			printf("Your Name is %s, you are %s years old and your username is %s\n", Name, Age, Username);
+		}
+
+
+		return 0;
+
+}
