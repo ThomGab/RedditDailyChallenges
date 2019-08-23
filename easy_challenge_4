@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#define MAX 100
+
+int main() {
+
+	char * input = NULL;
+	char * output = NULL;
+	char * key_ptr = NULL;
+	unsigned int key = 0;
+	unsigned int size = 0;
+
+	int current_char = 0;
+	unsigned int i = 0;
+
+	int mode = 0; //1 For Encrypt, 2 for Decrypt.
+	input = malloc(sizeof(char) * 3);
+
+	printf("Hi! Welcome to the Caesar Encryption/Decryption App.\n");
+
+	while (mode == 0) {
+		printf("Would you like to:\n");
+		printf("1) Encrypt.\n");
+		printf("2) Decrypt.\n");
+		printf("Please enter 1 or 2...\n");
+		fgets(input, 3, stdin);
+		if ((atoi(input) != 1) && (atoi(input) != 2)) {
+			printf("Please only enter 1 or 2.\n");
+		}
+		else {
+			mode = atoi(input);
+			free(input);
+			input = NULL;
+		}
+	}
+
+	input = malloc(MAX * sizeof(char));
+	output = malloc(MAX * sizeof(char));
+	key_ptr = malloc(3 * sizeof(int));
+
+	printf("Please Enter Input Text to Encipher/Decipher. (letters only, a-z, A-Z)\n");
+	printf("> ");
+	fgets(input, 100, stdin);
+
+	if (input != NULL) {
+		input = realloc(input, strlen(input) + 1);
+		printf("Input:\t %s\n\n", input);
+	}
+
+	printf("Please enter your Caesar Shift Key (0-26).\n");
+	printf("> ");
+	key_ptr = fgets(key_ptr, 3, stdin);
+
+	key = atoi(key_ptr);
+
+	if ((key < 0) || (key > 26)) {
+		printf("Key is out of range, please only enter between 0-26");
+	}
+	else {
+		if (output != NULL) {
+			output = realloc(output, strlen(input) + 1);
+			memset(output, '\0', strlen(input));
+			for (i = 0; i <= (strlen(input)-2); i++) {
+				//UpperCase
+				if ((input[i] >= 65) && (input[i] <= 90)) {
+					//Encryption Mode?
+					if (mode == 1) {
+						if ((input[i] + key) > 90) {
+							output[i] = (input[i] + key) - 26;
+						}
+						else {
+							output[i] = (input[i] + key);
+						}
+					}
+					//Decryption Mode
+					else {
+						if ((input[i] - key) < 65) {
+							output[i] = (input[i] - key) + 26;
+						}
+						else {
+							output[i] = (input[i] - key);
+						}
+					}
+
+				}
+
+				else {
+					//LowerCase
+					if ((input[i] >= 97) && (input[i] <= 122)) {
+						//Encryption Mode?
+						if (mode == 1) {
+							if ((input[i] + key) > 122) {
+								output[i] = (input[i] + key) - 26;
+							}
+							else {
+								output[i] = (input[i] + key);
+							}
+						}
+						//Decryption Mode
+						else {
+							if ((input[i] - key) < 97) {
+								output[i] = (input[i] - key) + 26;
+							}
+							else {
+								output[i] = (input[i] - key);
+							}
+						}
+					}
+
+					else {
+						printf("Character %d: %c = Invalid Input\n", i, input[i]);
+						output[i] = '#';
+					}
+				}
+			}
+
+			printf("Output:\t %s\n\n", output);
+		}
+		else {
+			printf("Failed to allocate Output Buffer...\n");	
+		}
+	}
+
+	free(input);
+	input = NULL;
+
+	free(output);
+	output = NULL;
+
+	free(key_ptr);
+	key_ptr = NULL;
+
+	return 0;
+
+}
