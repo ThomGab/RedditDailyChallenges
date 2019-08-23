@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#define MAX 100
+
+int main() {
+
+	char * buffer = NULL;
+
+	int desired_length = 0;
+	int desired_quantity = 1;
+	char * output_password_s[1] = NULL;
+
+	int i = 0;
+
+	printf("Welcome the random password generator app!\n\n");
+	
+	//Determining Number of random passwords to be generated.
+	printf("How many passwords would you like to generate?\n");
+	printf("Maximum batch of passwords generated is 100\n\n");
+	printf(">");
+
+	buffer = malloc(4);
+	if (buffer != NULL) {
+		fgets(buffer, 4, stdin);
+	}
+	else {
+		printf("Unable to allocate memory for desired_quantity input.\n");
+		printf("Exiting...\n\n");
+		return 0;
+	}
+
+	while (!(atoi(buffer) <= 100) && !(atoi(buffer) > 0)) {
+		printf("Please enter a number of passwords to generate, between 1 and 100.\n");
+	}
+
+	desired_quantity = atoi(buffer);
+	free(buffer);
+	buffer = NULL;
+	//Finished Determining Number of random passwords to generate.
+
+	//Getting Desired Length of passwords to generate.
+	printf("What length should each individual password be?\n");
+	printf(">");
+	buffer = malloc(3);
+
+	printf("\nGenerating %d passwords...\n", desired_quantity);
+
+	if (desired_quantity > 1) {
+		realloc(output_password_s,)
+	}
+
+
+
+
+
+	return 0;
+
+}
