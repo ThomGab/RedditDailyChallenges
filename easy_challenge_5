@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#define MAX 100
+#define PASSWORD_SIZE 8
+
+void generate_password(char * single_empty_password_buffer, int password_size) {
+
+	//I know this isn't cryptographically secure.
+
+	int i = 0;
+	int state = 0; //randomly decides to generate a lower case character, upper case character, or a number. 
+
+	for (i = 0; single_empty_password_buffer[i] != '\0'; i++) {
+		
+		state = rand() % 4;
+		switch (state) {
+
+		case (1)://Generate a random number;
+			single_empty_password_buffer[i] = '0' + (rand() % 9);
+			break;
+
+		case (2)://Generate a random lowercase
+			single_empty_password_buffer[i] = 'a' + (rand() % 26);
+			break;
+
+		case (3)://Generate a random lowercase
+			single_empty_password_buffer[i] = 'A' + (rand() % 26);
+			break;
+
+		default:
+			single_empty_password_buffer[i] = '0';
+		}
+
+	}
+
+	printf("Password generated:\t %s\n", single_empty_password_buffer);
+
+	return;
+
+}
+
+
+int main() {
+
+	char * buffer = NULL;
+
+	int desired_length = 8; //Default
+	int desired_quantity = 1;
+	char ** output_password_list_ptrs = malloc(sizeof(char *));
+
+	int i = 0;
+
+	output_password_list_ptrs[0] = malloc(desired_length * sizeof(char));
+
+	printf("Welcome the random password generator app!\n\n");
+	
+	//Determining Number of random passwords to be generated.
+	printf("How many passwords would you like to generate?\n");
+	printf("Maximum batch of passwords generated is 100\n\n");
+	printf(">");
+
+	buffer = malloc(4);
+	if (buffer != NULL) {
+		fgets(buffer, 4, stdin);
+	}
+	else {
+		printf("Unable to allocate memory for desired_quantity input.\n");
+		printf("Exiting...\n\n");
+		return 0;
+	}
+
+	while (!(atoi(buffer) <= 100) && !(atoi(buffer) >= 1)) {
+		printf("Please enter a number of passwords to generate, between 1 and 100.\n");
+	}
+
+	desired_quantity = atoi(buffer);
+	free(buffer);
+	buffer = NULL;
+	//Finished Determining Number of random passwords to generate.
+
+	/*Getting Desired Length of passwords to generate.
+	printf("What length should each individual password be?\n");
+	printf(">");
+	buffer = malloc(3);*/
+	printf("\nGenerating %d password(s)...\n", desired_quantity);
+
+	if (desired_quantity > 1) {
+		realloc(output_password_list_ptrs, (sizeof(char *) * desired_quantity));
+		if (output_password_list_ptrs == NULL) {
+			printf("Reallocation of pointer array to larger amount failed.\n");
+			return 0;
+		}
+		else {
+			for (i = 0; i < desired_quantity; i++) {
+				output_password_list_ptrs[i] = malloc(sizeof(char) * desired_length);
+			}
+		}
+	}
+
+	for (i = 0; i < desired_quantity; i++) {
+		generate_password(output_password_list_ptrs[i], desired_length);
+	}
+
+	printf("Passwords Generated:\n");
+
+	for (i = 0; i < desired_quantity; i++) {
+		printf("Pass %d: %s\n",i+1, output_password_list_ptrs[i]);
+	}
+
+	return 0;
+
+}
