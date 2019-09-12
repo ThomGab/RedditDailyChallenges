@@ -6,14 +6,15 @@ typedef struct Event_Struct {
 	char * Start_Time; //24 Hour Digital format, HH:MM:SS
 	char * End_Time; //24 Hour Digital format, HH:MM:SS
 	char * Duration; //24 Hour Digital format, HH:MM:SS
-	char * Date; //Month and then Day format, MM/DD
+	char * Start_Date; //Month and then Day format, MM/DD
+	char * End_Date; //Month and then Day format, MM/DD
 }Event;
 
 char * Validate_ASCII_Input(char Low, char High, char ** input_range) {
 
 	while (((**input_range) < Low) || ((**input_range > High))) {
-		printf("Please only enter a digit between %c and %c.\n>", Low, High);
-		fgets(*input_range, 3, stdin); //one for input char, another for new line of enter, a final for terminating character.
+		printf("Please only enter a digit between %c and %c.\n> ", Low, High);
+		fgets(*input_range, 4, stdin); //one for input char, another for new line of enter, a final for terminating character.
 	}
 
 	return *input_range;
@@ -67,9 +68,10 @@ void print_main_menu() {
 	printf("(Events most only be an hour long.)\n\n");
 	printf("1) Add an event.\n");
 	printf("2) Delete an event.\n");
-	printf("3) View event(s).\n");
+	printf("3) Sort event(s).\n");
 	printf("4) Add an event.\n");
-	printf("5) Exit.\n\n");
+	printf("5) View event(s).\n");
+	printf("6) Exit.\n\n");
 
 	return;
 
@@ -84,9 +86,6 @@ char * CreateEventMenu_GetInput(int option_to_exclude_from_menu, char ** user_in
 	int Finished = 0;
 
 	while (Finished = 0) {
-
-		printf("\n___Creating Event___\n");
-		printf("Please Enter one of the following to begin Event Construction...\n");
 
 		if (option_to_exclude_from_menu != 1) {
 			printf("1) Event Start Time (HH:MM:SS)\n");
@@ -106,7 +105,7 @@ char * CreateEventMenu_GetInput(int option_to_exclude_from_menu, char ** user_in
 		switch (option_to_exclude_from_menu) {
 		case(1):
 			if ((**user_input_buffer != '2') || (**user_input_buffer != '3')) {
-				printf("You've Already entered the Event Start Time. Would you like to Amend this value? (Y/N)\n>");
+				printf("You've Already entered the Event Start Time. Would you like to Amend this value? (Y/N)\n> ");
 				fgets(*user_input_buffer, 3, stdin);
 				while ((**user_input_buffer != 'Y') || (**user_input_buffer != 'N')) {
 					printf("Please only enter Y, or N.");
@@ -125,7 +124,7 @@ char * CreateEventMenu_GetInput(int option_to_exclude_from_menu, char ** user_in
 			break;
 		case(2):
 			if ((**user_input_buffer != '1') || (**user_input_buffer != '3')) {
-				printf("You've Already entered the Event End Time. Would you like to Amend this value? (Y/N)\n>");
+				printf("You've Already entered the Event End Time. Would you like to Amend this value? (Y/N)\n> ");
 				fgets(*user_input_buffer, 3, stdin);
 				while ((**user_input_buffer != 'Y') || (**user_input_buffer != 'N')) {
 					printf("Please only enter Y, or N.");
@@ -144,7 +143,7 @@ char * CreateEventMenu_GetInput(int option_to_exclude_from_menu, char ** user_in
 			break;
 		case(3):
 			if ((**user_input_buffer != '1') || (**user_input_buffer != '3')) {
-				printf("You've Already entered the Event End Time. Would you like to Amend this value? (Y/N)\n>");
+				printf("You've Already entered the Event End Time. Would you like to Amend this value? (Y/N)\n> ");
 				fgets(*user_input_buffer, 3, stdin);
 				while ((**user_input_buffer != 'Y') || (**user_input_buffer != 'N')) {
 					printf("Please only enter Y, or N.");
@@ -176,6 +175,56 @@ char * CreateEventMenu_GetInput(int option_to_exclude_from_menu, char ** user_in
 
 }
 
+
+char * GetDate(char ** user_input_buffer) {
+
+	int Finished_Date_Processing = 0;
+	char * month_str = malloc(sizeof(char) * 3);
+	char * day_str = malloc(sizeof(char) * 3);
+	int day = 0;
+	int month = 0;
+	int month_to_daycount[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+	while (Finished_Date_Processing != 1) {
+		if (user_input_buffer != NULL) {
+
+			printf("Please enter date. (DD/MM)\n> ");
+			fgets(*user_input_buffer, 7, stdin);
+
+			if (month_str != NULL) {
+				month_str[0] = (*user_input_buffer)[3];
+				month_str[1] = (*user_input_buffer)[4];
+				month_str[2] = '\0';
+
+				month = atoi(month_str);
+				if (month > 12 || month < 1) {
+					printf("Please Enter a valid Month (between 01 and 12.)\n");
+					Finished_Date_Processing = 0;
+				}
+			}
+
+			if (day_str != NULL) {
+				day_str[0] = (*user_input_buffer)[0];
+				day_str[1] = (*user_input_buffer)[1];
+				day_str[2] = '\0';
+
+				day = atoi(day_str);
+				if ((day > 0) && (day <= month_to_daycount[month])) {
+					Finished_Date_Processing = 1;
+				}
+				else {
+					printf("Invalid Date Entered, (between 1 and %d required for month %d.)\n", month_to_daycount[month], month);
+					Finished_Date_Processing = 0;
+				}
+			}
+		}
+	}
+
+	return *user_input_buffer;
+
+}
+
+
 Event * Create_Event(FILE * EventDataBase) {
 
 	/* Functioin Description:
@@ -192,9 +241,51 @@ Event * Create_Event(FILE * EventDataBase) {
 	int var2 = 0;
 	char * temp = NULL;
 	int user_input = 0;
-	int i = 0;
 
-	user_input_buffer = malloc(3 * sizeof(char));
+	user_input_buffer = malloc(8 * sizeof(char));
+
+	New_Event = malloc(1 * sizeof(Event));
+	New_Event->Start_Time = malloc(sizeof(char) * 9); //24 Hour Digital format, HH:MM:SS
+	New_Event->End_Time = malloc(sizeof(char) * 9);  //24 Hour Digital format, HH:MM:SS
+	New_Event->Duration = malloc(sizeof(char) * 9); //24 Hour Digital format, HH:MM:SS
+	New_Event->Start_Date = malloc(sizeof(char) * 6); //Month and then Day format, MM/DD
+	New_Event->End_Date = malloc(sizeof(char) * 6);
+
+
+	//Getting Event Start and End Date.
+	if ((user_input_buffer) != NULL) {
+
+		printf("\n*-----Creating Event-----*\n");
+		printf("*Event Start Date*\n> ");
+		strcpy(New_Event->Start_Date, GetDate(&user_input_buffer));
+
+		printf("Does the Event last longer than a day? (Y\N)\n> ");
+
+		if (user_input_buffer != NULL) {
+			fgets(user_input_buffer, 4, stdin);
+
+			while ((*user_input_buffer != 'Y') && (*user_input_buffer != 'N')) {
+				printf("Please only enter Y or N.\n> ");
+				fgets(user_input_buffer, 3, stdin);
+			}
+
+			if ((*user_input_buffer == 'Y')) {
+				realloc(user_input_buffer, (6 * sizeof(char)));
+				printf("*Event End Date*\n> ");
+				printf("Please enter event end date. (DD/MM)\n> ");
+				strcpy(New_Event->End_Date, GetDate(&user_input_buffer));
+			}
+			else {
+				strcpy(New_Event->End_Date,New_Event->Start_Date);
+			}
+		}
+
+		else {
+			printf("Failed reallocation of Multiday Question Buffer.\n");
+		}
+
+	}
+
 
 	if (user_input_buffer != NULL) {
 
@@ -273,17 +364,10 @@ Event * Create_Event(FILE * EventDataBase) {
 				return NULL;
 			}
 		}
-
-		//We now have 2 variables, we can determine the 3rd.
-		if(var1 + var2 == 3){
-			//then Option 3 has not been entered (Duration)
-			for(i = 0; New_Event->End_Time[i])
-	
-		
+	}
 
 	else {
-		printf("Failed initial application of Creat_Event Memory Block...\n");
-		return NULL;
+		printf("User_input_buffer allocation failed.\n");
 	}
 
 }
@@ -295,16 +379,16 @@ int main_menu(FILE * EventDataBase) {
 
 	Event * New_Event = NULL;
 
-	user_input = malloc(3 * sizeof(char)); //one for new line character, plus one for terminating null value.
+	user_input = malloc(4 * sizeof(char)); //one for new line character, plus one for terminating null value.
 
 	print_main_menu();
 
 	//check to see if user input is between 1 and 5.
 	while (main_menu_status == 0) {
 		printf("Please select an option.\n");
-		printf(">");
+		printf("> ");
 
-		fgets(user_input, 3, stdin);
+		fgets(user_input, 4, stdin);
 		Validate_ASCII_Input('1', '5', &user_input);
 		main_menu_status = atoi(user_input);
 
