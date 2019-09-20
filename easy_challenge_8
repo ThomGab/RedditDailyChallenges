@@ -1,0 +1,14 @@
+#include <stdio.h>
+
+int main() {
+	int i = 99;
+
+	for (i = 99; i != 1; i--) {
+		printf("There were %d green bottles standing on a wall, %d green bottles standing on a wall, and if one green bottle should accidentally fall, there'd be %d green bottles standing on the wall.\n", i, i, (i - 1));
+	}
+
+	printf("There were %d green bottles standing on a wall, %d green bottles standing on a wall, and if one green bottle should accidentally fall, there'd be no more green bottles standing on the wall.\n", i,i);
+
+	return 0;
+
+}
