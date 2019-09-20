@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 50
+
+int get_numberofentries(char * user_input) {
+
+	int number_of_entries = 1;
+	int i = 0;
+
+	for (i = 0; user_input[i] != '\0'; i++) {
+		if (user_input[i] == ' ') {
+			number_of_entries++;
+		}
+		else {
+		}
+	}
+
+	return number_of_entries;
+}
+
+char * sort_input(char * user_input, int number_of_entries) {
+
+	int i = 0;
+
+	char * output = malloc( (strlen(user_input) + 1) * sizeof(char));
+	char * copy_of_input = malloc((strlen(user_input) + 1) * sizeof(char));
+	char * *array_of_inputs[] = malloc(sizeof(*array_of_inputs) * number_of_entries);
+
+	strtok(copy_of_input, " ");
+	
+	for (i = 0; i <= number_of_entries - 1; i++) {
+		array_of_inputs[i] = malloc( (strlen(copy_of_input) + 1) * sizeof(**array_of_inputs));
+		strcpy(array_of_inputs, copy_of_input);
+		strtok(NULL, " ");
+	}
+
+
+	for (i = 0; i <= (number_of_entries - 1); i++) {
+
+
+
+	}
+
+	return 
+}
+
+
+int main() {
+
+	char * user_input = malloc(sizeof(char) * 3); //One for input char, one for user hitting enter ('\n') another for NULL terminator.
+	int Read_State = 0;
+
+	printf("*Sorting App*\n");
+	printf("Do you want to sort Digits or Words/Characters?\n\n");
+	printf("1) Digits");
+	printf("2) Characters");
+
+	if (user_input != NULL) {
+		fgets(user_input, 3, stdin);
+		while ((*user_input != '1') && (*user_input != '2')) {
+			printf("Please only enter 1, if you want to enter Digits.\n");
+			printf("OR\n");
+			printf("Please only enter 2, if you want to enter Characters/Words\n");
+			printf("OR\n");
+			printf("Enter 0 to exit the program");
+		}
+
+		Read_State = atoi(user_input);
+
+		if (Read_State != 0) {
+			realloc(user_input, (MAX_SIZE)*(sizeof(char)));
+			if (user_input == NULL) {
+				printf("Failed to reallocate user Buffer to max size, Exiting...\n");
+				return 0;
+			}
+		}
+
+	}
+
+	else {
+		printf("Failed to initalise user_inputs buffer. Exiting...");
+		return 0;
+	}
+
+	switch (Read_State) {
+
+	case(0)://Exit Program
+		free(user_input);
+		user_input = NULL;
+		return 0;
+		break;
+	
+	case(1)://Sort Digits
+		printf("Please Enter your digits, with a space to seperate individual entries.\n");
+		break;
+	
+	case(2):
+		break;
+
+	default:
+		printf("Unhandled State\n");
+		break;
+
+	}
+
+
+}
